@@ -52,7 +52,7 @@ class User extends Authenticatable
      */
     public function favorites(): BelongsToMany
     {
-        return $this->belongsToMany(Book::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(Book::class, 'favorites');
     }
 
     /**
@@ -60,6 +60,6 @@ class User extends Authenticatable
      */
     public function likedReviews(): BelongsToMany
     {
-        return $this->belongsToMany(Review::class, 'review_likes')->withTimestamps();
+        return $this->belongsToMany(Review::class, 'review_likes');
     }
 }
