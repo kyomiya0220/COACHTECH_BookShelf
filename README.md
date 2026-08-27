@@ -9,9 +9,9 @@ erDiagram
 
     books ||--o{ reviews : "レビューされる"
     books ||--o{ favorites : "お気に入りされる"
-    books ||--o{ book_category : "属する"
+    books ||--o{ book_genre : "属する"
 
-    categories ||--o{ book_category : "含む"
+    categories ||--o{ book_genre : "含む"
 
     reviews ||--o{ review_likes : "いいねされる"
 
@@ -26,7 +26,7 @@ erDiagram
         timestamp updated_at
     }
 
-    categories {
+    genres {
         bigint_unsigned id PK
         string name UK
         timestamp created_at
@@ -46,7 +46,7 @@ erDiagram
         timestamp updated_at
     }
 
-    book_category {
+    book_genre {
         bigint_unsigned book_id PK, FK
         bigint_unsigned category_id PK, FK
     }

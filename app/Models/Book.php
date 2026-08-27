@@ -30,6 +30,14 @@ class Book extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function index()
+    {
+        $books = Book::with('categories')
+            ->withAvg('reviews', 'rating')
+            ->paginate(9);
+
+        return view('books.index', compact('books'));
+    }
     /**
      * 設定されたジャンル（多対多）
      */

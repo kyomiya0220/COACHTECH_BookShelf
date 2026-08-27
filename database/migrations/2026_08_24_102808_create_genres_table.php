@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('book_category', function (Blueprint $table) {
-            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->primary(['book_id', 'category_id']);
+        Schema::create('genres', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 100)->unique();
+            $table->timestamps();
         });
     }
 
@@ -22,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('book_category');
+        Schema::dropIfExists('genres');
     }
 };
