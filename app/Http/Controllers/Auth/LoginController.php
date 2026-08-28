@@ -23,13 +23,16 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('books.index'));
+            // ログイン成功時のフラッシュメッセージ
+            return redirect()->intended(route('books.index'))
+                ->with('success', 'ログインに成功しました。');
         }
 
         return back()->withErrors([
             'email' => 'ログイン情報が登録されていません。',
         ])->onlyInput('email');
     }
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -37,8 +40,8 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login'); // ログアウト後のリダイレクト先
-
+        // ログアウト時のフラッシュメッセージ
+        return redirect()->route('login')
+            ->with('success', 'ログアウトしました。');
     }
-
 }

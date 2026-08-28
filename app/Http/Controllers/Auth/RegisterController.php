@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest; // 追加
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -16,13 +17,18 @@ class RegisterController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        // バリデーション通過後のユーザー作成処理
-        User::create([
+        // 作成したユーザーインスタンスを変数 $user に受け取る
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('login')->with('message', 'ユーザー登録が完了しました。');
+        // 作成したユーザーでログイン処理
+        Auth::login($user);
+
+        // フラッシュメッセージを付与してリダイレクト
+        return redirect()->route('books.index')
+            ->with('success', 'ユーザー登録が完了しました。');
     }
 }
