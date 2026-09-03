@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use App\Models\Genre;
 class GenreSeeder extends Seeder
 {
     /**
@@ -26,7 +26,7 @@ class GenreSeeder extends Seeder
         ];
 
         foreach ($genres as $genreName) {
-            Category::firstOrCreate(['name' => $genreName]);
+            Genre::firstOrCreate(['name' => $genreName]);
         }
     }
 }

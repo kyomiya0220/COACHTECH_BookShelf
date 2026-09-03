@@ -4,61 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
 class Book extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'title',
-        'author',
-        'isbn',
-        'published_date',
-        'description',
-        'image_url',
-    ];
+    // 許可するカラム名（必要に応じて変更してください）
+    protected $fillable = ['title', 'genre_id'];
 
-    /**
-     * 登録したユーザー
-     */
-    public function user(): BelongsTo
+    // Genreモデルとのリレーション（Bookは1つのGenreに属する）
+    public function genres(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(Genre::class);
     }
-
-    public function index()
-    {
-        $books = Book::with('categories')
-            ->withAvg('reviews', 'rating')
-            ->paginate(9);
-
-        return view('books.index', compact('books'));
-    }
-    /**
-     * 設定されたジャンル（多対多）
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'book_category');
-    }
-
-    /**
-     * 寄せられたレビュー
-     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
-
-    /**
-     * お気に入り登録したユーザー（多対多）
-     */
-    public function favoritedBy(): BelongsToMany
+    public function favorites(): HasMany
     {
-        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+        return $this->hasMany(Favorite::class);
     }
+
 }

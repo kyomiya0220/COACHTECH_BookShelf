@@ -31,6 +31,7 @@ class LoginController extends Controller
         return back()->withErrors([
             'email' => 'ログイン情報が登録されていません。',
         ])->onlyInput('email');
+
     }
 
     public function logout(Request $request)

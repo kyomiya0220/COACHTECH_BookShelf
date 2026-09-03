@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Book;
-use App\Models\Category;
+use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -43,8 +43,8 @@ class BookSeeder extends Seeder
                 ]
             );
 
-            $categoryIds = Category::whereIn('name', $data['genres'])->pluck('id');
-            $book->categories()->sync($categoryIds);
+            $genreIds = Genre::whereIn('name', $data['genres'])->pluck('id');
+            $book->genres()->sync($genreIds);
         }
     }
 }

@@ -1,10 +1,16 @@
 <x-guest-layout>
+    @if (session('status'))
+        <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
+            {{ session('status') }}
+        </div>
+    @endif
     <form method="POST" action="{{ route('login') }}" novalidate>
         @csrf
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('メールアドレス')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" autofocus />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                autofocus />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
