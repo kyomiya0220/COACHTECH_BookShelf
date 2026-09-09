@@ -1,9 +1,16 @@
 <x-guest-layout>
+    @if (session('message'))
+        <div class="mb-4 p-4 text-sm text-amber-800 rounded-lg bg-amber-50 border border-amber-200" role="alert">
+            {{ session('message') }}
+        </div>
+    @endif
+
     @if (session('status'))
         <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
             {{ session('status') }}
         </div>
     @endif
+
     <form method="POST" action="{{ route('login') }}" novalidate>
         @csrf
         <!-- Email Address -->
