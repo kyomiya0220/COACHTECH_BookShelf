@@ -50,7 +50,7 @@ class User extends Authenticatable
     /**
      * お気に入り書籍（多対多）
      */
-    public function favorites(): BelongsToMany
+    public function favoriteBooks()
     {
         return $this->belongsToMany(Book::class, 'favorites');
     }

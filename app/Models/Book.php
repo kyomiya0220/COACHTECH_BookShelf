@@ -11,7 +11,15 @@ class Book extends Model
     use HasFactory;
 
     // 許可するカラム名（必要に応じて変更してください）
-    protected $fillable = ['title', 'genre_id'];
+    protected $fillable = [
+        'user_id',
+        'title',
+        'author',
+        'isbn',
+        'published_date',
+        'description',
+        'image_url',
+    ];
 
     // Genreモデルとのリレーション（Bookは1つのGenreに属する）
     public function genres(): BelongsToMany

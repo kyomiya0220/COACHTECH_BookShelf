@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Genre;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreBookRequest;
+// ★ BookRequest を使う場合は以下を追加（StoreBookRequestを使うなら変更してください）
+use App\Http\Requests\BookRequest;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        // create（画面表示）と store（保存処理）のアクションだけログイン必須にする
+        $this->middleware('auth')->only(['create', 'store']);
+    }
+
     public function index()
     {
         // 10件/ページでペジネーション（ジャンルリレーションを事前ロード）
@@ -27,6 +36,25 @@ class BookController extends Controller
         return view('books.create', compact('genres', 'bookGenreIds'));
     }
 
+    public function store(StoreBookRequest $request)
+    {
+        // 1. バリデーション済みデータを取得
+        $validated = $request->validated();
+
+        // 2. ログイン中のユーザーIDをセット
+        $validated['user_id'] = auth()->id();
+
+        // 3. 書籍本体を保存
+        $book = Book::create($validated);
+
+        // 4. ジャンル（多対多リレーション）を保存する処理を追加
+        if (isset($validated['genres'])) {
+            $book->genres()->sync($validated['genres']);
+        }
+
+        return redirect()->route('books.index');
+    }
+
     public function show(Book $book)
     {
         // リレーション（ジャンル、レビューとその投稿者、いいね数）をロード
@@ -34,5 +62,54 @@ class BookController extends Controller
             ->loadCount('favorites');
 
         return view('books.show', compact('book'));
+    }
+
+    public function edit(Book $book)
+    {
+        if (Auth::guest() || Auth::id() !== $book->user_id) {
+            abort(403, 'この書籍を編集する権限がありません。');
+        }
+
+        // 全ジャンルを取得
+        $genres = Genre::all();
+
+        // 該当の書籍に登録されているジャンルIDの配列を取得
+        $bookGenreIds = $book->genres->pluck('id')->toArray();
+
+        return view('books.edit', compact('book', 'genres', 'bookGenreIds'));
+    }
+
+    public function update(StoreBookRequest $request, Book $book)
+    {
+        if (Auth::guest() || Auth::id() !== $book->user_id) {
+            abort(403, 'この書籍を更新する権限がありません。');
+        }
+
+        $validated = $request->validated();
+
+        // 書籍本体の更新
+        $book->update($validated);
+
+        // ジャンル（多対多）の同期
+        if (isset($validated['genres'])) {
+            $book->genres()->sync($validated['genres']);
+        } else {
+            $book->genres()->detach();
+        }
+
+        return redirect()->route('books.show', $book);
+    }
+
+    public function destroy(Book $book)
+    {
+        if (Auth::guest() || Auth::id() !== $book->user_id) {
+            abort(403, 'この書籍を削除する権限がありません。');
+        }
+
+        // 書籍データを削除
+        $book->delete();
+
+        // 削除完了後、一覧画面へリダイレクトしてメッセージを表示
+        return redirect()->route('books.index')->with('success', '書籍を削除しました。');
     }
 }
