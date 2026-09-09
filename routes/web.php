@@ -7,7 +7,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
 
-// ゲスト専用（ログイン済みは /books へリダイレクト）
+// ゲスト専用ルート
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])->middleware(['throttle:custom-limit']);
@@ -19,22 +19,25 @@ Route::middleware('guest')->group(function () {
 // トップページ（/）アクセス時も一覧を表示
 Route::get('/', [BookController::class, 'index']);
 
-Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
+// ナビゲーション等で参照される準備中ページ（未ログインでもアクセス可能にする場合）
+Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
+Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
 
+// 書籍のCRUD
+Route::resource('books', BookController::class);
+
+// レビュー関連
+Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
 Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
 Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
 
-// 書籍のCRUD（index, show, create, store, edit, update, destroy）を一括定義
-Route::resource('books', BookController::class);
-
-// ログイン必須のその他ルート
+// ログイン必須のルート
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
-    Route::get('/favorites', fn() => 'お気に入り（準備中）')->name('favorites.index');
-    Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
+    // お気に入り関連
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 });

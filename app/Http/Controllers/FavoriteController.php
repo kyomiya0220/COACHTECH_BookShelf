@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    /**
-     * お気に入りの追加・解除を切り替える (toggle)
-     */
+    public function index()
+    {
+        // ログインユーザーのお気に入り書籍を投稿日降順などで取得（ページネーション付き）
+        $books = auth()->user()->favoriteBooks()
+            ->with(['genres'])
+            ->paginate(10);
+
+        return view('favorites.index', compact('books'));
+    }
     public function toggle(Book $book)
     {
         // 未ログイン時はメッセージ付きでログイン画面へ
@@ -22,7 +28,7 @@ class FavoriteController extends Controller
         // トグル処理（登録済みなら解除、未登録なら追加）
         auth()->user()->favoriteBooks()->toggle($book->id);
 
-        return back();
+        return redirect()->back();
     }
 
     public function store(Request $request, Book $book)
