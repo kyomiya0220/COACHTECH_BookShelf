@@ -59,5 +59,17 @@ class ReviewController extends Controller
         return redirect()->back()
             ->with('success', 'レビューを削除しました。');
     }
+    public function like(Review $review)
+    {
+        $user = auth()->user();
 
+        // 既にいいねしている場合は解除、していなければ追加
+        if ($user->likedReviews->contains($review->id)) {
+            $user->likedReviews()->detach($review->id);
+        } else {
+            $user->likedReviews()->attach($review->id);
+        }
+
+        return back();
+    }
 }

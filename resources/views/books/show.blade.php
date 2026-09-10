@@ -54,8 +54,8 @@
                                         </form>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="text-gray-400 hover:text-red-500"
-                                        title="お気に入りに追加するにはログインしてください">
+                                    <a href="{{ route('login', ['message' => 'お気に入りに追加するにはログインしてください。']) }}"
+                                        class="text-gray-400 hover:text-red-500" title="">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
                                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -205,7 +205,7 @@
                                                     </form>
                                                 @endif
                                             @else
-                                                <a href="{{ route('login') }}"
+                                                <a href="{{ route('login', ['message' => 'この機能を利用するにはログインが必要です。']) }}"
                                                     class="text-gray-500 hover:text-blue-500 text-sm flex items-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none"
                                                         stroke="currentColor" stroke-width="2" viewBox="0 0 20 20">

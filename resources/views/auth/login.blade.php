@@ -1,7 +1,7 @@
 <x-guest-layout>
-    @if (session('message'))
-        <div class="mb-4 p-4 text-sm text-amber-800 rounded-lg bg-amber-50 border border-amber-200" role="alert">
-            {{ session('message') }}
+    @if (session('message') || request('message'))
+        <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
+            {{ session('message') ?? request('message') }}
         </div>
     @endif
 
