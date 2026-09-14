@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\GenreController;
 
 // ゲスト専用ルート
 Route::middleware('guest')->group(function () {
@@ -40,4 +41,7 @@ Route::middleware('auth')->group(function () {
     // お気に入り関連
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
+    Route::resource('genres', GenreController::class);
+
 });

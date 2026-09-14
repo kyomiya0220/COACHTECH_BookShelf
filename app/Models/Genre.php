@@ -15,6 +15,6 @@ class Genre extends Model
     // Bookモデルとのリレーション（1対多の場合）
     public function books()
     {
-        return $this->hasMany(Book::class);
+        return $this->belongsToMany(Book::class);
     }
 }
