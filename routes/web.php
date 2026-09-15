@@ -7,6 +7,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\RankingController;
 
 // ゲスト専用ルート
 Route::middleware('guest')->group(function () {
@@ -33,6 +34,8 @@ Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('r
 Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
 Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
+
+Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
 
 // ログイン必須のルート
 Route::middleware('auth')->group(function () {

@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Book extends Model
 {
     use HasFactory;
 
-    // 許可するカラム名（必要に応じて変更してください）
     protected $fillable = [
         'user_id',
         'title',
@@ -21,10 +21,18 @@ class Book extends Model
         'image_url',
     ];
 
-    // Genreモデルとのリレーション（Bookは1つのGenreに属する）
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class);
+    }
+
+    public function genre(): BelongsTo
+    {
+        return $this->belongsTo(Genre::class);
     }
     public function reviews(): HasMany
     {

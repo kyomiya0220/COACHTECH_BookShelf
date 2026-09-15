@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateGenreRequest;
 use App\Models\Genre;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreGenreRequest;
 
 class GenreController extends Controller
 {
@@ -28,13 +29,9 @@ class GenreController extends Controller
     }
 
     // 登録処理
-    public function store(Request $request)
+    public function store(StoreGenreRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:genres,name',
-        ]);
-
-        Genre::create($request->only('name'));
+        Genre::create($request->validated());
 
         return redirect()->route('genres.index')->with('success', 'ジャンルを作成しました。');
     }
@@ -46,13 +43,9 @@ class GenreController extends Controller
     }
 
     // 更新処理
-    public function update(Request $request, Genre $genre)
+    public function update(UpdateGenreRequest $request, Genre $genre)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:genres,name,' . $genre->id,
-        ]);
-
-        $genre->update($request->only('name'));
+        $genre->update($request->validated());
 
         return redirect()->route('genres.index')->with('success', 'ジャンルを更新しました。');
     }
