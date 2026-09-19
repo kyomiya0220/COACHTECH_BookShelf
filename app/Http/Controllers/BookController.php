@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Http\Requests\StoreBookRequest;
-// ★ BookRequest を使う場合は以下を追加（StoreBookRequestを使うなら変更してください）
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,13 +40,18 @@ class BookController extends Controller
         // 1. バリデーション済みデータを取得
         $validated = $request->validated();
 
-        // 2. ログイン中のユーザーIDをセット
+        // 2. ログイン中のユーザーIDと代表ジャンルIDをセット
         $validated['user_id'] = auth()->id();
+
+        // DBのgenre_idカラム（必須）を埋めるための処理
+        if (isset($validated['genres']) && is_array($validated['genres']) && count($validated['genres']) > 0) {
+            $validated['genre_id'] = $validated['genres'][0];
+        }
 
         // 3. 書籍本体を保存
         $book = Book::create($validated);
 
-        // 4. ジャンル（多対多リレーション）を保存する処理を追加
+        // 4. ジャンル（多対多リレーション）を保存する処理
         if (isset($validated['genres'])) {
             $book->genres()->sync($validated['genres']);
         }
