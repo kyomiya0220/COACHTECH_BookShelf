@@ -14,7 +14,14 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first();
+        // 全ユーザーを取得
+        $users = User::all();
+        if ($users->isEmpty()) {
+            $users = User::factory()->count(5)->create();
+        }
+
+        // デフォルトジャンルを取得（DBになければ作成）
+        $defaultGenre = Genre::first() ?? Genre::factory()->create();
 
         $booksData = [
             1 => ['title' => '吾輩は猫である', 'author' => '夏目漱石', 'isbn' => '9784101010014', 'published_date' => '1905-01-01', 'genres' => ['小説']],
@@ -31,10 +38,15 @@ class BookSeeder extends Seeder
         ];
 
         foreach ($booksData as $num => $data) {
+            // 指定のジャンル名からIDを取得。該当が無ければデフォルトジャンルを使用
+            $genreModels = Genre::whereIn('name', $data['genres'])->get();
+            $firstGenreId = $genreModels->first()->id ?? $defaultGenre->id;
+
             $book = Book::firstOrCreate(
                 ['isbn' => $data['isbn']],
                 [
-                    'user_id' => $user->id,
+                    'user_id' => $users->random()->id,
+                    'genre_id' => $firstGenreId, // ★追加：必須カラムである genre_id を設定
                     'title' => $data['title'],
                     'author' => $data['author'],
                     'published_date' => $data['published_date'],
@@ -43,8 +55,10 @@ class BookSeeder extends Seeder
                 ]
             );
 
-            $genreIds = Genre::whereIn('name', $data['genres'])->pluck('id');
-            $book->genres()->sync($genreIds);
+            // 多対多の紐付けも維持
+            if ($genreModels->isNotEmpty()) {
+                $book->genres()->sync($genreModels->pluck('id'));
+            }
         }
     }
 }

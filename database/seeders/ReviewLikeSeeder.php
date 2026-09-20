@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ReviewLikeSeeder extends Seeder
 {
@@ -13,16 +14,23 @@ class ReviewLikeSeeder extends Seeder
      */
     public function run(): void
     {
+        $users = User::all();
         $reviews = Review::all();
 
-        foreach ($reviews as $review) {
-            // 自分のレビューを除外したユーザーリスト
-            $otherUsers = User::where('id', '!=', $review->user_id)->get();
-            $likeCount = rand(0, min(3, $otherUsers->count()));
+        if ($users->isEmpty() || $reviews->isEmpty()) {
+            return;
+        }
 
-            if ($likeCount > 0) {
-                $likers = $otherUsers->random($likeCount);
-                $review->likes()->syncWithoutDetaching($likers->pluck('id'));
+        // 各レビューに対してランダムなユーザーからいいねを付ける
+        foreach ($reviews as $review) {
+            $randomUsers = $users->random(rand(1, min(3, $users->count())));
+
+            foreach ($randomUsers as $user) {
+                // user_id と review_id のみ指定して登録
+                DB::table('review_likes')->insertOrIgnore([
+                    'user_id' => $user->id,
+                    'review_id' => $review->id,
+                ]);
             }
         }
     }
