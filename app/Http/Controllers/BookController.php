@@ -6,9 +6,9 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class BookController extends Controller
 {
@@ -18,12 +18,74 @@ class BookController extends Controller
         $this->middleware('auth')->only(['create', 'store']);
     }
 
-    public function index()
+    /**
+     * 書籍一覧表示（検索・絞り込み・ソート対応）
+     */
+    public function index(Request $request): View
     {
-        // 10件/ページでペジネーション（ジャンルリレーションを事前ロード）
-        $books = Book::with('genres')->latest()->paginate(10);
+        // 1. クエリビルダの初期化（ジャンルリレーション・レビュー集計の Eager Loading）
+        $query = Book::query()
+            ->with(['genres', 'reviews'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
-        return view('books.index', compact('books'));
+        // 2. キーワード検索（タイトル または 著者名：前後の半角・全角スペースをトリム）
+        if ($request->filled('keyword')) {
+            // 全角スペース（\u{3000}）および半角スペースのトリム処理
+            $keywordInput = preg_replace('/^[\s\x{3000}]+|[\s\x{3000}]+$/u', '', $request->input('keyword'));
+
+            if ($keywordInput !== '') {
+                $keyword = '%' . addcslashes($keywordInput, '%_\\') . '%';
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('title', 'like', $keyword)
+                        ->orWhere('author', 'like', $keyword);
+                });
+            }
+        }
+
+        // 3. ジャンル絞り込み（GETパラメータ: genre）
+        if ($request->filled('genre')) {
+            $genreId = $request->input('genre');
+            $query->whereHas('genres', function ($q) use ($genreId) {
+                $q->where('genres.id', $genreId);
+            });
+        }
+
+        // 4. ソート順制御（不正なパラメータの場合は fallback として newest に処理）
+        $sort = $request->input('sort', 'newest');
+
+        switch ($sort) {
+            case 'oldest':
+                // 登録日が古い順
+                $query->orderBy('id', 'asc');
+                break;
+
+            case 'title':
+                // タイトル昇順
+                $query->orderBy('title', 'asc');
+                break;
+
+            case 'rating':
+                // 平均評価が高い順（レビューなし/NULLは最後、同率は登録順 desc）
+                $query->orderByRaw('reviews_avg_rating IS NULL ASC')
+                    ->orderBy('reviews_avg_rating', 'desc')
+                    ->orderBy('id', 'desc');
+                break;
+
+            case 'newest':
+            default:
+                // 登録日が新しい順（デフォルト）
+                $query->orderBy('id', 'desc');
+                break;
+        }
+
+        // 5. ページネーション（1ページ10件）＆ 検索クエリ保持
+        $books = $query->paginate(10)->withQueryString();
+
+        // 検索フォーム用のジャンル一覧も取得して View へ渡す
+        $genres = Genre::all();
+
+        return view('books.index', compact('books', 'genres'));
     }
 
     public function create()

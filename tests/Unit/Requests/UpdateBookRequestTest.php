@@ -23,7 +23,7 @@ class UpdateBookRequestTest extends TestCase
             'title' => '更新後のタイトル',
             'author' => '更新後の著者',
             'isbn' => '9784123456789',
-            'published_at' => '2026-01-01',
+            'published_date' => '2026-01-01',
             'genres' => [$genre->id],
         ];
 
@@ -42,7 +42,7 @@ class UpdateBookRequestTest extends TestCase
             'title' => '',
             'author' => '',
             'isbn' => '',
-            'published_at' => '',
+            'published_date' => '',
             'genres' => [],
         ];
 
@@ -53,7 +53,7 @@ class UpdateBookRequestTest extends TestCase
         $this->assertArrayHasKey('title', $validator->errors()->toArray());
         $this->assertArrayHasKey('author', $validator->errors()->toArray());
         $this->assertArrayHasKey('isbn', $validator->errors()->toArray());
-        $this->assertArrayHasKey('published_at', $validator->errors()->toArray());
+        $this->assertArrayHasKey('published_date', $validator->errors()->toArray());
         $this->assertArrayHasKey('genres', $validator->errors()->toArray());
     }
 
@@ -68,7 +68,7 @@ class UpdateBookRequestTest extends TestCase
             'title' => str_repeat('a', 256),
             'author' => '更新後の著者',
             'isbn' => '9784123456789',
-            'published_at' => '2026-01-01',
+            'published_date' => '2026-01-01',
             'genres' => [$genre->id],
         ];
 
