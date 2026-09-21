@@ -51,11 +51,25 @@ class BookController extends Controller
     /**
      * AP02: 書籍詳細取得
      */
-    public function show(Book $book)
+    public function show(string $id): JsonResponse
     {
-        $book->load(['genres', 'reviews.user']);
+        try {
+            // ID指定で検索（リレーションと集計も含める）
+            $book = Book::with(['genre', 'reviews.user'])
+                ->withCount('reviews')
+                ->withAvg('reviews', 'rating')
+                ->findOrFail($id);
 
-        return new BookDetailResource($book);
+            return response()->json([
+                'data' => new BookResource($book)
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            // 404エラー用JSONレスポンス
+            return response()->json([
+                'error' => '書籍が見つかりませんでした。'
+            ], 404);
+        }
     }
 
     /**
