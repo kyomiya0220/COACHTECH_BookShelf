@@ -48,6 +48,8 @@ class BookManagementTest extends TestCase
      */
     public function test_owner_can_update_and_delete_own_book(): void
     {
+        $this->withoutExceptionHandling();
+
         $owner = User::factory()->create();
         $genre = Genre::factory()->create();
         $book = Book::factory()->create(['user_id' => $owner->id, 'genre_id' => $genre->id]);

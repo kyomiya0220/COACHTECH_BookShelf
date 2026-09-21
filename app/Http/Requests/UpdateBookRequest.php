@@ -29,7 +29,7 @@ class UpdateBookRequest extends FormRequest
                 Rule::unique('books', 'isbn')
                     ->ignore($bookId)
             ],
-            'published_at' => ['required', 'date', 'date_format:Y-m-d'],
+            'published_date' => ['required', 'date',],
             'description' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['nullable', 'url', 'max:2048'],
             'genres' => ['required', 'array', 'min:1'],
@@ -47,8 +47,8 @@ class UpdateBookRequest extends FormRequest
             'isbn.required' => 'ISBNを入力してください。',
             'isbn.regex' => 'ISBNは13桁で入力してください。',
             'isbn.unique' => 'このISBNは既に使用されています。',
-            'published_at.required' => '出版日を入力してください。',
-            'published_at.date_format' => '出版日は有効な日付形式（YYYY-MM-DD）で入力してください。',
+            'published_date.required' => '出版日を入力してください。',
+            'published_date.date_format' => '出版日は有効な日付形式（YYYY-MM-DD）で入力してください。',
             'description.max' => '説明は1000文字以内で入力してください。',
             'image_url.url' => '画像URLは有効なURL形式で入力してください。',
             'genres.required' => 'ジャンルを選択してください。',

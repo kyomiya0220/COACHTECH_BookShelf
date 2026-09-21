@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\BookDetailResource;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
@@ -55,7 +56,7 @@ class BookController extends Controller
     {
         try {
             // ID指定で検索（リレーションと集計も含める）
-            $book = Book::with(['genre', 'reviews.user'])
+            $book = Book::with(['genres', 'reviews.user'])
                 ->withCount('reviews')
                 ->withAvg('reviews', 'rating')
                 ->findOrFail($id);

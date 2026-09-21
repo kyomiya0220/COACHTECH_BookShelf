@@ -22,7 +22,9 @@ class Book extends Model
         'description',
         'image_url',
     ];
-
+    protected $casts = [
+        'published_date' => 'date',
+    ];
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

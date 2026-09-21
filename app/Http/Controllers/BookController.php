@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
@@ -83,18 +85,15 @@ class BookController extends Controller
         return view('books.edit', compact('book', 'genres', 'bookGenreIds'));
     }
 
-    public function update(StoreBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book)
     {
-        if (Auth::guest() || Auth::id() !== $book->user_id) {
-            abort(403, 'この書籍を更新する権限がありません。');
-        }
+        $this->authorize('update', $book);
 
         $validated = $request->validated();
 
         // 書籍本体の更新
         $book->update($validated);
 
-        // ジャンル（多対多）の同期
         if (isset($validated['genres'])) {
             $book->genres()->sync($validated['genres']);
         } else {
@@ -106,9 +105,7 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
-        if (Auth::guest() || Auth::id() !== $book->user_id) {
-            abort(403, 'この書籍を削除する権限がありません。');
-        }
+        $this->authorize('delete', $book);
 
         // 書籍データを削除
         $book->delete();
