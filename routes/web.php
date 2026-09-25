@@ -21,30 +21,30 @@ Route::middleware('guest')->group(function () {
 // トップページ（/）アクセス時も一覧を表示
 Route::get('/', [BookController::class, 'index']);
 
-// ナビゲーション等で参照される準備中ページ（未ログインでもアクセス可能にする場合）
-Route::get('/ranking', fn() => 'ランキング（準備中）')->name('ranking.index');
-Route::get('/genres', fn() => 'ジャンル管理（準備中）')->name('genres.index');
-
-// 書籍のCRUD
-Route::resource('books', BookController::class);
-
-// レビュー関連
-Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
-Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
-Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
-
+// ランキング
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
+
+// ジャンル管理（CRUD）
+Route::resource('genres', GenreController::class);
 
 // ログイン必須のルート
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    // ISBN検索API
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'fetchByIsbn'])->name('books.fetchByIsbn');
+
+    // 書籍のCRUD（ログイン中のみ登録・編集などを許可）
+    Route::resource('books', BookController::class);
+
     // お気に入り関連
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
-    Route::resource('genres', GenreController::class);
-
+    // レビュー関連
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
 });

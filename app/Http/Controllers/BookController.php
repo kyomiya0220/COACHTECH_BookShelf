@@ -8,6 +8,9 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class BookController extends Controller
@@ -99,6 +102,82 @@ class BookController extends Controller
         return view('books.create', compact('genres', 'bookGenreIds'));
     }
 
+    /**
+     * ISBNからGoogle Books API経由で書籍情報を取得する（提供Blade JS仕様準拠）
+     */
+    public function fetchByIsbn(string $isbn): JsonResponse
+    {
+        // a. 13桁チェック（数値かつ13桁）
+        if (!preg_match('/^\d{13}$/', $isbn)) {
+            return response()->json([
+                'error' => 'ISBNは13桁で入力してください。'
+            ], 400);
+        }
+
+        try {
+            $apiKey = config('services.google_books.api_key') ?: env('GOOGLE_BOOKS_API_KEY');
+            $url = "https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn}";
+
+            if ($apiKey) {
+                $url .= "&key={$apiKey}";
+            }
+
+            $response = Http::get($url);
+
+            // c. クォータ超過チェック (429 Too Many Requests)
+            if ($response->status() === 429) {
+                return response()->json([
+                    'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。'
+                ], 429);
+            }
+
+            if (!$response->successful()) {
+                return response()->json([
+                    'error' => 'API通信エラーが発生しました。'
+                ], 500);
+            }
+
+            $data = $response->json();
+
+            // b. 書籍が見つからない場合
+            if (empty($data['totalItems']) || empty($data['items'])) {
+                return response()->json([
+                    'error' => '書籍が見つかりませんでした。'
+                ], 404);
+            }
+
+            $volumeInfo = $data['items'][0]['volumeInfo'] ?? [];
+
+            // 日付フォーマットの整形（Blade側の Date パースでずれないよう YYYY-MM-DD に統一）
+            $rawDate = $volumeInfo['publishedDate'] ?? '';
+            $publishedDate = '';
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDate)) {
+                $publishedDate = $rawDate;
+            } elseif (preg_match('/^\d{4}-\d{2}$/', $rawDate)) {
+                $publishedDate = $rawDate . '-01';
+            } elseif (preg_match('/^\d{4}$/', $rawDate)) {
+                $publishedDate = $rawDate . '-01-01';
+            }
+
+            // 成功時レスポンス（error キーは含めない）
+            return response()->json([
+                'title' => $volumeInfo['title'] ?? '',
+                'author' => isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : '',
+                'published_date' => $publishedDate,
+                'description' => $volumeInfo['description'] ?? '',
+                'image_url' => $volumeInfo['imageLinks']['thumbnail'] ?? $volumeInfo['imageLinks']['smallThumbnail'] ?? '',
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Google Books API Error: ' . $e->getMessage());
+
+            // d. 通信エラー等の例外
+            return response()->json([
+                'error' => 'API通信エラーが発生しました。'
+            ], 500);
+        }
+    }
+
     public function store(StoreBookRequest $request)
     {
         // 1. バリデーション済みデータを取得
@@ -120,7 +199,9 @@ class BookController extends Controller
             $book->genres()->sync($validated['genres']);
         }
 
-        return redirect()->route('books.index');
+        return redirect()
+            ->route('books.index')
+            ->with('success', '書籍を登録しました。');
     }
 
     public function show(Book $book)
