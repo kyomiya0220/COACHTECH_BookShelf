@@ -17,10 +17,8 @@ class BookController extends Controller
 {
     public function __construct()
     {
-        // create（画面表示）と store（保存処理）のアクションだけログイン必須にする
-        $this->middleware('auth')->only(['create', 'store']);
+        $this->middleware('auth')->except(['index', 'show']);
     }
-
     /**
      * 書籍一覧表示（検索・絞り込み・ソート対応）
      */

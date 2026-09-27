@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // 全てのビューに対して $unreadNotificationCount を自動供給する
+        View::composer('*', function ($view) {
+            $count = Auth::check() ? Auth::user()->unreadNotifications->count() : 0;
+            $view->with('unreadNotificationCount', $count);
+        });
     }
 }
