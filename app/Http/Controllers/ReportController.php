@@ -22,14 +22,16 @@ class ReportController extends Controller
         $averageRating = (clone $userReviews)->avg('rating') ?: 0;
 
         // 2. 評価分布（1〜5星ごとの件数）
-        // Collection のキーを 0〜4 (1〜5星に対応) で初期化
         $ratingDistribution = collect([1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0]);
+
         $counts = (clone $userReviews)
             ->select('rating', DB::raw('count(*) as count'))
             ->groupBy('rating')
             ->pluck('count', 'rating');
 
-        $ratingDistribution = $ratingDistribution->merge($counts)->values();
+        $ratingDistribution = collect([1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0])
+            ->replace($counts)
+            ->values();
 
         // 3. 高評価書籍 TOP5（★4以上、評価の降順、最大5件）
         $topRatedBooks = (clone $userReviews)

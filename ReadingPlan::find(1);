@@ -1,0 +1,58 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8089
+    [34mall[39m: [
+      [34;4mApp\Models\ReadingPlan[39;24m {#8091
+        [34mid[39m: [35m1[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-28[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8092
+        [34mid[39m: [35m2[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-25[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8093
+        [34mid[39m: [35m3[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-22[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8094
+        [34mid[39m: [35m4[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-10-02[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8095
+        [34mid[39m: [35m5[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-15[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mcompleted[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8096
+        [34mid[39m: [35m6[39m,
+        [34muser_id[39m: [35m2[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-30[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8097
+        [34mid[39m: [35m8[39m,
+        [34muser_id[39m: [35m6[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-30[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mcompleted[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8098
+        [34mid[39m: [35m9[39m,
+        [34muser_id[39m: [35m6[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-29[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mreading[39m[32m"[39m,
+      },
+      [34;4mApp\Models\ReadingPlan[39;24m {#8099
+        [34mid[39m: [35m10[39m,
+        [34muser_id[39m: [35m6[39m,
+        [34mtarget_date[39m: [32m"[39m[32m2026-09-28[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mreading[39m[32m"[39m,
+      },
+    ],
+  }

@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Http\Requests\StoreReadingPlanRequest;
 use App\Enums\ReadingPlanStatus;
 use App\Http\Requests\UpdateReadingPlanRequest;
+use Carbon\Carbon;
 
 class ReadingPlanController extends Controller
 {
@@ -16,6 +17,7 @@ class ReadingPlanController extends Controller
     {
         $currentStatus = $request->input('status');
 
+        // ログインユーザー自身の読書計画のみを取得（ここで他人のデータが入るのを防ぐ！）
         $query = auth()->user()->readingPlans()->with('book');
 
         if ($currentStatus) {
@@ -72,7 +74,12 @@ class ReadingPlanController extends Controller
     // 削除処理（Policy 認可あり）
     public function destroy(ReadingPlan $readingPlan)
     {
-        $this->authorize('delete', $readingPlan);
+        // ★ ログインユーザー以外のデータであれば 403 エラーを返す
+        if ($readingPlan->user_id !== auth()->id()) {
+            abort(403, '他人の読書計画は削除できません。');
+        }
+
+        // $this->authorize('delete', $readingPlan);
 
         $readingPlan->delete();
 

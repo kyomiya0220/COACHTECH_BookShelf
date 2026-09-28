@@ -10,6 +10,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\NotificationController;
 
 // ゲスト専用ルート
 Route::middleware('guest')->group(function () {
@@ -50,9 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/reading-plans/{reading_plan}/complete', [ReadingPlanController::class, 'complete'])
         ->name('reading-plans.complete');
 
-
     // 通知ルート
-    Route::get('/notifications', fn() => redirect()->route('books.index'))->name('notifications.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 
     // ISBN検索API
     Route::get('/books/isbn/{isbn}', [BookController::class, 'fetchByIsbn'])->name('books.fetchByIsbn');
