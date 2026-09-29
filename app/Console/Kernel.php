@@ -12,8 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // 毎日深夜 0:00 に日次バッチを実行する
-        $schedule->command('reading-plans:process-daily')->dailyAt('00:00');
+        // 毎日 20:00 に日次バッチを実行する
+        $schedule->command('reading-plans:process-daily')->dailyAt('20:00');
     }
 
     /**

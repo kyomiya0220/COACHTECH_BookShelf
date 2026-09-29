@@ -95,6 +95,6 @@ class ReadingPlanController extends Controller
             'status' => ReadingPlanStatus::Completed->value,
         ]);
 
-        return redirect()->route('reading-plans.index')->with('success', '本を読了しました！おめでとうございます！');
+        return redirect()->route('reading-plans.index')->with('success', '読書計画を完了しました。');
     }
 }
