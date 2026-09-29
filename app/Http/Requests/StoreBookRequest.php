@@ -36,13 +36,6 @@ class StoreBookRequest extends FormRequest
             ];
         }
     }
-    public function messages(): array
-    {
-        return [
-            'isbn.regex' => 'ISBNは13桁の数字で入力してください。',
-            'isbn.unique' => 'このISBNはすでに登録されています。',
-        ];
-    }
 
     public function messages(): array
     {

@@ -3,27 +3,23 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\V1\BookDetailResource;
+use App\Http\Requests\Api\V1\StoreBookRequest;
+use App\Http\Requests\Api\V1\UpdateBookRequest;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
     /**
      * AP01: 書籍一覧取得
      */
-    public function index(Request $request)
+    public function index(IndexBookRequest $request)
     {
-        $request->validate([
-            'keyword' => ['nullable', 'string', 'max:255'],
-            'genre_id' => ['nullable', 'integer', 'exists:genres,id'],
-            'page' => ['nullable', 'integer', 'min:1'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
-        ]);
+        // バリデーションは IndexBookRequest で自動処理されます
 
         $query = Book::with(['genres'])->withAvg('reviews', 'rating')->withCount('reviews');
 
@@ -48,14 +44,12 @@ class BookController extends Controller
 
         return BookResource::collection($books);
     }
-
     /**
      * AP02: 書籍詳細取得
      */
     public function show(string $id): JsonResponse
     {
         try {
-            // ID指定で検索（リレーションと集計も含める）
             $book = Book::with(['genres', 'reviews.user'])
                 ->withCount('reviews')
                 ->withAvg('reviews', 'rating')
@@ -66,7 +60,6 @@ class BookController extends Controller
             ], 200);
 
         } catch (ModelNotFoundException $e) {
-            // 404エラー用JSONレスポンス
             return response()->json([
                 'error' => '書籍が見つかりませんでした。'
             ], 404);
@@ -76,22 +69,13 @@ class BookController extends Controller
     /**
      * AP03: 書籍新規登録
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'string', 'regex:/^\d{13}$/', 'unique:books,isbn'],
-            'published_date' => ['required', 'date', 'date_format:Y-m-d'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'genre_id' => ['required', 'integer', 'exists:genres,id'],
-            'user_id' => ['nullable', 'integer', 'exists:users,id'],
-        ]);
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
 
-        $userId = auth()->id() ?? $validated['user_id'] ?? \App\Models\User::first()?->id ?? 1;
-
-        $book = Book::create([
-            'user_id' => $userId,
+        // ログインユーザーに紐づけて作成
+        $book = $request->user()->books()->create([
             'genre_id' => $validated['genre_id'],
             'title' => $validated['title'],
             'author' => $validated['author'],
@@ -114,22 +98,13 @@ class BookController extends Controller
     /**
      * AP04: 書籍情報更新
      */
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book)
     {
-        $validated = $request->validate([
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'author' => ['sometimes', 'required', 'string', 'max:255'],
-            'isbn' => [
-                'sometimes',
-                'required',
-                'string',
-                'regex:/^\d{13}$/',
-                Rule::unique('books', 'isbn')->ignore($book->id),
-            ],
-            'published_date' => ['sometimes', 'required', 'date', 'date_format:Y-m-d'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'genre_id' => ['sometimes', 'required', 'integer', 'exists:genres,id'],
-        ]);
+        // 1. 認可チェック（所有者でなければここで 403 エラーを返却）
+        $this->authorize('update', $book);
+
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
 
         $book->update($request->only(['title', 'author', 'isbn', 'published_date', 'description']));
 
@@ -147,6 +122,9 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
+        // 1. 認可チェック（所有者でなければここで 403 エラーを返却）
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return response()->noContent();
