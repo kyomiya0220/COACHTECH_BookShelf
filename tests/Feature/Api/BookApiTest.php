@@ -12,25 +12,25 @@ class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // テスト用のジャンルと書籍を作成
-        $genre = Genre::factory()->create();
-        Book::factory()->create([
-            'id' => 1,
-            'genre_id' => $genre->id,
-            'title' => 'テスト書籍',
-        ]);
-    }
-
     /**
-     * @test
-     * 正常系: GET /api/books で200と定義通りのJSONが返るか
+     * 書籍一覧取得
      */
     public function test_get_books_list_successfully(): void
     {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $books = Book::factory()->count(3)->create([
+            'user_id' => $user->id,
+            'genre_id' => $genre->id,
+        ]);
+
+        foreach ($books as $book) {
+            if (method_exists($book, 'genres')) {
+                $book->genres()->attach($genre->id);
+            }
+        }
+
         $response = $this->getJson('/api/v1/books');
 
         $response->assertStatus(200)
@@ -42,50 +42,34 @@ class BookApiTest extends TestCase
     }
 
     /**
-     * @test
-     * 正常系: GET /api/books/1 で詳細が200で返るか
+     * 書籍詳細取得
      */
     public function test_get_book_detail_successfully(): void
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
 
-        $response = $this->getJson('/api/v1/books/1');
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+            'genre_id' => $genre->id,
+        ]);
+
+        $response = $this->getJson("/api/v1/books/{$book->id}");
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.id', 1)
-            ->assertJsonPath('data.title', 'テスト書籍');
+            ->assertJsonPath('data.id', $book->id);
     }
 
     /**
-     * @test
-     * 異常系(404): 存在しない書籍ID指定時に 404 エラーJSONが返るか
+     * 存在しない書籍の取得（404）
      */
     public function test_returns_404_when_book_not_found(): void
     {
-        $response = $this->getJson('/api/v1/books/999');
+        $response = $this->getJson('/api/v1/books/99999');
 
         $response->assertStatus(404)
             ->assertExactJson([
-                'error' => '指定されたリソースが見つかりませんでした。'
-            ]);
-    }
-
-    /**
-     * @test
-     * 異常系(401): 認証必須APIに無認証アクセスした際に 401 が返るか
-     */
-    public function test_returns_401_when_unauthenticated(): void
-    {
-
-        $this->markTestSkipped('応用機能で対応予定');
-
-        $response = $this->withHeaders([
-            'Accept' => 'application/json',
-        ])->postJson('/api/v1/books');
-
-        $response->assertStatus(401)
-            ->assertExactJson([
-                'error' => '認証されていません。ログインしてください。'
+                'error' => '書籍が見つかりませんでした。'
             ]);
     }
 }

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
+use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class BookController extends Controller
