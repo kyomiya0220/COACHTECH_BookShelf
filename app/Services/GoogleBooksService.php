@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class GoogleBooksService
 {
@@ -14,7 +14,7 @@ class GoogleBooksService
     public function searchByIsbn(string $isbn): array
     {
         // a. 13桁チェック（400 Bad Request）
-        if (strlen($isbn) !== 13 || !ctype_digit($isbn)) {
+        if (strlen($isbn) !== 13 || ! ctype_digit($isbn)) {
             return [
                 'success' => false,
                 'status' => 400,
@@ -26,7 +26,7 @@ class GoogleBooksService
 
         try {
             // Laravel標準の Http ファサードを使用
-            $queryParams = ['q' => 'isbn:' . $isbn];
+            $queryParams = ['q' => 'isbn:'.$isbn];
             if ($apiKey) {
                 $queryParams['key'] = $apiKey;
             }
@@ -70,9 +70,9 @@ class GoogleBooksService
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDate)) {
                 $publishedDate = $rawDate;
             } elseif (preg_match('/^\d{4}-\d{2}$/', $rawDate)) {
-                $publishedDate = $rawDate . '-01';
+                $publishedDate = $rawDate.'-01';
             } elseif (preg_match('/^\d{4}$/', $rawDate)) {
-                $publishedDate = $rawDate . '-01-01';
+                $publishedDate = $rawDate.'-01-01';
             }
 
             return [
@@ -88,7 +88,7 @@ class GoogleBooksService
             ];
 
         } catch (Exception $e) {
-            Log::error('Google Books API Error: ' . $e->getMessage());
+            Log::error('Google Books API Error: '.$e->getMessage());
 
             // d. API通信エラー（500 Internal Server Error）
             return [

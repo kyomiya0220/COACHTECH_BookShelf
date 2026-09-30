@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\ReadingPlan;
-use App\Models\Book;
-use App\Http\Requests\StoreReadingPlanRequest;
 use App\Enums\ReadingPlanStatus;
+use App\Http\Requests\StoreReadingPlanRequest;
 use App\Http\Requests\UpdateReadingPlanRequest;
-use Carbon\Carbon;
+use App\Models\Book;
+use App\Models\ReadingPlan;
+use Illuminate\Http\Request;
 
 class ReadingPlanController extends Controller
 {
@@ -33,6 +32,7 @@ class ReadingPlanController extends Controller
     public function create()
     {
         $books = Book::all(); // フォームで選択する書籍リスト
+
         return view('reading-plans.create', compact('books'));
     }
 

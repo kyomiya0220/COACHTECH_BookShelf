@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreBookRequest extends FormRequest
 {
@@ -19,22 +18,23 @@ class StoreBookRequest extends FormRequest
     {
         // URLパラメータから編集中の Book オブジェクトを取得（新規時は null）
         $book = $this->route('book');
-        $bookId = $book ? $book->id : null; {
-            return [
-                'title' => ['required', 'string', 'max:255'],
-                'author' => ['required', 'string', 'max:255'],
-                'isbn' => [
-                    'required',
-                    'regex:/^\d{13}$/',
-                    'unique:books,isbn',
-                ],
-                'published_date' => ['required', 'date', 'date_format:Y-m-d'],
-                'description' => ['nullable', 'string', 'max:1000'],
-                'image_url' => ['nullable', 'url', 'max:2048'],
-                'genres' => ['required', 'array', 'min:1'],
-                'genres.*' => ['integer', 'exists:genres,id'],
-            ];
-        }
+        $bookId = $book ? $book->id : null;
+
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'author' => ['required', 'string', 'max:255'],
+            'isbn' => [
+                'required',
+                'regex:/^\d{13}$/',
+                'unique:books,isbn',
+            ],
+            'published_date' => ['required', 'date', 'date_format:Y-m-d'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'image_url' => ['nullable', 'url', 'max:2048'],
+            'genres' => ['required', 'array', 'min:1'],
+            'genres.*' => ['integer', 'exists:genres,id'],
+        ];
+
     }
 
     public function messages(): array
@@ -57,4 +57,3 @@ class StoreBookRequest extends FormRequest
         ];
     }
 }
-

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Genre;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\Book;
+use App\Models\Genre;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -19,6 +19,7 @@ class BookController extends Controller
     {
         $this->middleware('auth')->except(['index', 'show']);
     }
+
     /**
      * 書籍一覧表示（検索・絞り込み・ソート対応）
      */
@@ -36,7 +37,7 @@ class BookController extends Controller
             $keywordInput = preg_replace('/^[\s\x{3000}]+|[\s\x{3000}]+$/u', '', $request->input('keyword'));
 
             if ($keywordInput !== '') {
-                $keyword = '%' . addcslashes($keywordInput, '%_\\') . '%';
+                $keyword = '%'.addcslashes($keywordInput, '%_\\').'%';
                 $query->where(function ($q) use ($keyword) {
                     $q->where('title', 'like', $keyword)
                         ->orWhere('author', 'like', $keyword);
@@ -106,9 +107,9 @@ class BookController extends Controller
     public function fetchByIsbn(string $isbn): JsonResponse
     {
         // a. 13桁チェック（数値かつ13桁）
-        if (!preg_match('/^\d{13}$/', $isbn)) {
+        if (! preg_match('/^\d{13}$/', $isbn)) {
             return response()->json([
-                'error' => 'ISBNは13桁で入力してください。'
+                'error' => 'ISBNは13桁で入力してください。',
             ], 400);
         }
 
@@ -125,13 +126,13 @@ class BookController extends Controller
             // c. クォータ超過チェック (429 Too Many Requests)
             if ($response->status() === 429) {
                 return response()->json([
-                    'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。'
+                    'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。',
                 ], 429);
             }
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return response()->json([
-                    'error' => 'API通信エラーが発生しました。'
+                    'error' => 'API通信エラーが発生しました。',
                 ], 500);
             }
 
@@ -140,7 +141,7 @@ class BookController extends Controller
             // b. 書籍が見つからない場合
             if (empty($data['totalItems']) || empty($data['items'])) {
                 return response()->json([
-                    'error' => '書籍が見つかりませんでした。'
+                    'error' => '書籍が見つかりませんでした。',
                 ], 404);
             }
 
@@ -152,9 +153,9 @@ class BookController extends Controller
             if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDate)) {
                 $publishedDate = $rawDate;
             } elseif (preg_match('/^\d{4}-\d{2}$/', $rawDate)) {
-                $publishedDate = $rawDate . '-01';
+                $publishedDate = $rawDate.'-01';
             } elseif (preg_match('/^\d{4}$/', $rawDate)) {
-                $publishedDate = $rawDate . '-01-01';
+                $publishedDate = $rawDate.'-01-01';
             }
 
             // 成功時レスポンス（error キーは含めない）
@@ -167,11 +168,11 @@ class BookController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error('Google Books API Error: ' . $e->getMessage());
+            Log::error('Google Books API Error: '.$e->getMessage());
 
             // d. 通信エラー等の例外
             return response()->json([
-                'error' => 'API通信エラーが発生しました。'
+                'error' => 'API通信エラーが発生しました。',
             ], 500);
         }
     }

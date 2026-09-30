@@ -59,6 +59,7 @@ class ReviewController extends Controller
         return redirect()->back()
             ->with('success', 'レビューを削除しました。');
     }
+
     public function like(Review $review)
     {
         $user = auth()->user();

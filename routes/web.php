@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\GenreController;
-use App\Http\Controllers\RankingController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ReadingPlanController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RankingController;
+use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReviewController;
+use Illuminate\Support\Facades\Route;
 
 // ゲスト専用ルート
 Route::middleware('guest')->group(function () {
@@ -29,7 +29,6 @@ Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index
 
 // 書籍（/books）関連のルート（一覧・詳細は未ログインOK、その他は Controller 側で制御）
 Route::resource('books', BookController::class);
-
 
 // ログイン必須（auth）のルートグループ
 Route::middleware('auth')->group(function () {

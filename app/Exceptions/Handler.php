@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -13,7 +14,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of exception types with their corresponding custom log levels.
      *
-     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
+     * @var array<class-string<Throwable>, LogLevel::*>
      */
     protected $levels = [
         //
@@ -22,7 +23,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of the exception types that are not reported.
      *
-     * @var array<int, class-string<\Throwable>>
+     * @var array<int, class-string<Throwable>>
      */
     protected $dontReport = [
         //
@@ -55,21 +56,21 @@ class Handler extends ExceptionHandler
                 // 401: 未認証エラー
                 if ($e instanceof AuthenticationException) {
                     return response()->json([
-                        'error' => '認証されていません。ログインしてください。'
+                        'error' => '認証されていません。ログインしてください。',
                     ], 401);
                 }
 
                 // 404: 存在しないリソース
                 if ($e instanceof NotFoundHttpException) {
                     return response()->json([
-                        'error' => '指定されたリソースが見つかりませんでした。'
+                        'error' => '指定されたリソースが見つかりませんでした。',
                     ], 404);
                 }
 
                 // 429: レートリミット（過剰アクセス）
                 if ($e instanceof ThrottleRequestsException) {
                     return response()->json([
-                        'error' => 'リクエスト上限を超えました。時間をおいて再試行してください。'
+                        'error' => 'リクエスト上限を超えました。時間をおいて再試行してください。',
                     ], 429);
                 }
             }

@@ -23,6 +23,7 @@ class ReadingPlanSeeder extends Seeder
         $books = Book::all();
         if ($books->count() < 6) {
             $this->command->warn('書籍データが6件未満のため、ReadingPlanSeeder を正しく実行できません。');
+
             return;
         }
 

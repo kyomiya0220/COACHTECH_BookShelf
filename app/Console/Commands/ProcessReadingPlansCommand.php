@@ -2,15 +2,16 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\ReadingPlan;
 use App\Enums\ReadingPlanStatus;
+use App\Models\ReadingPlan;
 use App\Notifications\PlanReminderNotification;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class ProcessReadingPlansCommand extends Command
 {
     protected $signature = 'reading-plans:process-daily';
+
     protected $description = '期日経過の自動更新およびリマインド通知の送信';
 
     public function handle()

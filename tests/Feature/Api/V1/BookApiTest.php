@@ -37,8 +37,8 @@ class BookApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'title', 'author', 'isbn']
-                ]
+                    '*' => ['id', 'title', 'author', 'isbn'],
+                ],
             ]);
     }
 
@@ -70,7 +70,7 @@ class BookApiTest extends TestCase
 
         $response->assertStatus(404)
             ->assertExactJson([
-                'error' => '書籍が見つかりませんでした。'
+                'error' => '書籍が見つかりませんでした。',
             ]);
     }
 

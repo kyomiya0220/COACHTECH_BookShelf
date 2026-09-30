@@ -27,7 +27,7 @@ class UpdateBookRequestTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $request = new UpdateBookRequest();
+        $request = new UpdateBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->passes());
@@ -46,7 +46,7 @@ class UpdateBookRequestTest extends TestCase
             'genres' => [],
         ];
 
-        $request = new UpdateBookRequest();
+        $request = new UpdateBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());
@@ -72,7 +72,7 @@ class UpdateBookRequestTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $request = new UpdateBookRequest();
+        $request = new UpdateBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());

@@ -15,4 +15,3 @@ Route::prefix('v1')->group(function () {
         Route::delete('/books/{book}', [BookController::class, 'destroy']);
     });
 });
-

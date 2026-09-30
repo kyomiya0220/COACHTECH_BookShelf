@@ -24,7 +24,7 @@ class RegisterRequestTest extends TestCase
             'password_confirmation' => 'password123',
         ];
 
-        $request = new RegisterRequest();
+        $request = new RegisterRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->passes());
@@ -41,7 +41,7 @@ class RegisterRequestTest extends TestCase
             'password' => '',
         ];
 
-        $request = new RegisterRequest();
+        $request = new RegisterRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());
@@ -58,7 +58,7 @@ class RegisterRequestTest extends TestCase
         User::factory()->create(['email' => 'existing@example.com']);
 
         // 形式不正
-        $request = new RegisterRequest();
+        $request = new RegisterRequest;
         $validatorInvalid = Validator::make(['email' => 'invalid-email'], $request->rules());
         $this->assertArrayHasKey('email', $validatorInvalid->errors()->toArray());
 
@@ -77,7 +77,7 @@ class RegisterRequestTest extends TestCase
             'password_confirmation' => 'short',
         ];
 
-        $request = new RegisterRequest();
+        $request = new RegisterRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());

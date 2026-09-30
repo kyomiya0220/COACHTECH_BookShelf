@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
-use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -44,6 +44,7 @@ class BookController extends Controller
 
         return BookResource::collection($books);
     }
+
     /**
      * AP02: 書籍詳細取得
      */
@@ -56,12 +57,12 @@ class BookController extends Controller
                 ->findOrFail($id);
 
             return response()->json([
-                'data' => new BookResource($book)
+                'data' => new BookResource($book),
             ], 200);
 
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'error' => '書籍が見つかりませんでした。'
+                'error' => '書籍が見つかりませんでした。',
             ], 404);
         }
     }

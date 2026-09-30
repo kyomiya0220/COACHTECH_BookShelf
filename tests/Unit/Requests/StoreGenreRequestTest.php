@@ -21,7 +21,7 @@ class StoreGenreRequestTest extends TestCase
             'name' => 'ファンタジー',
         ];
 
-        $request = new StoreGenreRequest();
+        $request = new StoreGenreRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->passes());
@@ -36,7 +36,7 @@ class StoreGenreRequestTest extends TestCase
             'name' => '',
         ];
 
-        $request = new StoreGenreRequest();
+        $request = new StoreGenreRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());
@@ -54,7 +54,7 @@ class StoreGenreRequestTest extends TestCase
             'name' => 'SF',
         ];
 
-        $request = new StoreGenreRequest();
+        $request = new StoreGenreRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());

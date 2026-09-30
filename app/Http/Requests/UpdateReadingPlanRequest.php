@@ -10,6 +10,7 @@ class UpdateReadingPlanRequest extends FormRequest
     {
         // ログインユーザー本人のデータか認可チェック（Policyを使用）
         $readingPlan = $this->route('reading_plan');
+
         return $this->user()->can('update', $readingPlan);
     }
 

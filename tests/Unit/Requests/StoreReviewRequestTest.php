@@ -4,7 +4,6 @@ namespace Tests\Unit\Requests;
 
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Book;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -26,7 +25,7 @@ class StoreReviewRequestTest extends TestCase
             'comment' => '素晴らしい本でした。',
         ];
 
-        $request = new StoreReviewRequest();
+        $request = new StoreReviewRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->passes());
@@ -40,7 +39,7 @@ class StoreReviewRequestTest extends TestCase
         $book = Book::factory()->create();
 
         // 0の場合
-        $request = new StoreReviewRequest();
+        $request = new StoreReviewRequest;
         $validatorMin = Validator::make([
             'book_id' => $book->id,
             'rating' => 0,
@@ -74,7 +73,7 @@ class StoreReviewRequestTest extends TestCase
             'comment' => str_repeat('a', 1001),
         ];
 
-        $request = new StoreReviewRequest();
+        $request = new StoreReviewRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());

@@ -16,6 +16,7 @@ class FavoriteController extends Controller
 
         return view('favorites.index', compact('books'));
     }
+
     public function toggle(Book $book)
     {
         // 未ログイン時はメッセージ付きでログイン画面へ

@@ -27,9 +27,9 @@ class UpdateBookRequest extends FormRequest
                 'required',
                 'regex:/^\d{13}$/',
                 Rule::unique('books', 'isbn')
-                    ->ignore($bookId)
+                    ->ignore($bookId),
             ],
-            'published_date' => ['required', 'date',],
+            'published_date' => ['required', 'date'],
             'description' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['nullable', 'url', 'max:2048'],
             'genres' => ['required', 'array', 'min:1'],

@@ -43,7 +43,7 @@ class BookSearchAndFilterTest extends TestCase
         Book::factory()->create(['title' => 'Laravel実践ガイド', 'author' => '山田太郎']);
 
         // 前後に全角・半角スペースを含めて検索
-        $response = $this->get('/books?keyword=' . urlencode('  Laravel  '));
+        $response = $this->get('/books?keyword='.urlencode('  Laravel  '));
 
         $response->assertStatus(200);
         $response->assertSee('Laravel実践ガイド');

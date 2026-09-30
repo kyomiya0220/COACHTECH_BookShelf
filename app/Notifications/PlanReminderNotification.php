@@ -2,15 +2,16 @@
 
 namespace App\Notifications;
 
+use App\Models\ReadingPlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use App\Models\ReadingPlan;
 
 class PlanReminderNotification extends Notification
 {
     use Queueable;
 
     protected $readingPlan;
+
     protected $type;
 
     public function __construct(ReadingPlan $readingPlan, string $type)

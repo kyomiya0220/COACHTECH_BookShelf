@@ -27,7 +27,7 @@ class StoreBookRequestTest extends TestCase
             'genres' => [$genre->id], // 配列形式
         ];
 
-        $request = new StoreBookRequest();
+        $request = new StoreBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->passes());
@@ -46,7 +46,7 @@ class StoreBookRequestTest extends TestCase
             'genres' => [],
         ];
 
-        $request = new StoreBookRequest();
+        $request = new StoreBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());
@@ -72,7 +72,7 @@ class StoreBookRequestTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $request = new StoreBookRequest();
+        $request = new StoreBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());
@@ -92,7 +92,7 @@ class StoreBookRequestTest extends TestCase
             'genres' => [99999], // 存在しないジャンルID
         ];
 
-        $request = new StoreBookRequest();
+        $request = new StoreBookRequest;
         $validator = Validator::make($data, $request->rules());
 
         $this->assertTrue($validator->fails());

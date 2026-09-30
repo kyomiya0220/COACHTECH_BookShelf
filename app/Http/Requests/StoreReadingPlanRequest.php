@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+
 class StoreReadingPlanRequest extends FormRequest
 {
     /**
@@ -31,6 +32,7 @@ class StoreReadingPlanRequest extends FormRequest
             'target_date' => 'required|date|after_or_equal:today',
         ];
     }
+
     /**
      * カスタムバリデーションメッセージ
      */

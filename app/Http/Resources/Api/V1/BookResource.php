@@ -23,7 +23,7 @@ class BookResource extends JsonResource
                 [
                     'id' => $this->genre->id,
                     'name' => $this->genre->name,
-                ]
+                ],
             ] : [],
             'average_rating' => $avg,
             'avg_rating' => $avg, // ★キー名の互換性のため追加

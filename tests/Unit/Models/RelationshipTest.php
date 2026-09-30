@@ -35,7 +35,7 @@ class RelationshipTest extends TestCase
         $this->assertTrue($user->reviews->contains('id', $review->id));
 
         $this->assertInstanceOf(Collection::class, $user->favorites);
-        $this->assertTrue($user->favorites->contains(fn($f) => $f->user_id === $user->id && $f->book_id === $favorite->book_id));
+        $this->assertTrue($user->favorites->contains(fn ($f) => $f->user_id === $user->id && $f->book_id === $favorite->book_id));
     }
 
     /**
@@ -63,7 +63,7 @@ class RelationshipTest extends TestCase
         $this->assertTrue($book->reviews->contains('id', $review->id));
 
         $this->assertInstanceOf(Collection::class, $book->favorites);
-        $this->assertTrue($book->favorites->contains(fn($f) => $f->book_id === $book->id));
+        $this->assertTrue($book->favorites->contains(fn ($f) => $f->book_id === $book->id));
     }
 
     /**
