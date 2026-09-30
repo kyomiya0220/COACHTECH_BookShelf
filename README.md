@@ -166,6 +166,29 @@ http://localhost
 
    ```
 
+   Google Books API キーの設定
+
+Google Cloud Console で Google Books API を有効化し、APIキーを発行してください。
+
+.env ファイルに以下を追記します：
+
+Ini, TOML
+GOOGLE_BOOKS_API_KEY=あなたのAPIキー
+キャッシュのクリアとマイグレーション
+
+Bash
+php artisan config:clear
+php artisan migrate
+
+#### `.env.example` にもキー名を追記しておく
+
+GitHubにプッシュされる `.env.example`（雛形ファイル）の末尾にも、キーの枠組みだけを追加しておきましょう。
+
+**`.env.example` の末尾に追記:**
+
+````ini
+GOOGLE_BOOKS_API_KEY=
+
 3. **Composer依存パッケージのインストール**
 
    プロジェクトの初回セットアップ時は、`vendor` ディレクトリが存在しないため `sail` コマンドを使用できません。
@@ -178,7 +201,7 @@ http://localhost
        -w /var/www/html \
        laravelsail/php82-composer:latest \
        composer install --ignore-platform-reqs
-   ```
+````
 
 4. 本プロジェクトでは、フロントエンドのスタイリングにTailwind CSSを使用します。
    以下の手順でセットアップを行ってください。
