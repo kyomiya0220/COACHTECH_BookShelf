@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('reading_plans', function (Blueprint $table) {
@@ -13,7 +12,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // ★ここがあるか確認
             $table->foreignId('book_id')->constrained()->cascadeOnDelete(); // ★ここがあるか確認
             $table->date('target_date');
-            $table->string('status')->default('in_progress');
+            $table->string('status')->default('Reading');
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
 

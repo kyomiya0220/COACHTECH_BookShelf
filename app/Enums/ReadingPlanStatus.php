@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum ReadingPlanStatus: string
 {
-    // Blade側の呼び出し (\App\Enums\ReadingPlanStatus::Completed) に合わせます
     case Reading = 'reading';
     case Completed = 'completed';
     case Overdue = 'overdue';
